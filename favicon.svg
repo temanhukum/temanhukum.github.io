@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1e33" />
+      <stop offset="50%" stop-color="#102a43" />
+      <stop offset="100%" stop-color="#071422" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fcd34d" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="tealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2dd4bf" />
+      <stop offset="100%" stop-color="#0d9488" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Squircle Base Background -->
+  <rect x="24" y="24" width="464" height="464" rx="112" fill="url(#bgGrad)" stroke="url(#tealGrad)" stroke-width="12" filter="url(#shadow)" />
+
+  <!-- Subtle Inner Ring Accent -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="#14b8a6" stroke-width="2" stroke-opacity="0.25" stroke-dasharray="12 8" />
+
+  <!-- Scales of Justice (Neraca Hukum) -->
+  <g id="scale-icon" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Center Top Finial Ornament -->
+    <circle cx="256" cy="116" r="18" fill="url(#goldGrad)" />
+    
+    <!-- Vertical Pillar -->
+    <path d="M 256 134 L 256 380" stroke="url(#goldGrad)" stroke-width="18" />
+    
+    <!-- Base Platform -->
+    <path d="M 170 400 L 342 400" stroke="url(#goldGrad)" stroke-width="20" stroke-linecap="round" />
+    <path d="M 196 380 L 316 380" stroke="url(#goldGrad)" stroke-width="16" stroke-linecap="round" />
+
+    <!-- Horizontal Balance Beam -->
+    <path d="M 120 184 Q 256 168 392 184" fill="none" stroke="url(#goldGrad)" stroke-width="16" />
+
+    <!-- Left Pan Assembly -->
+    <g id="left-pan">
+      <!-- Cords -->
+      <line x1="120" y1="184" x2="80" y2="280" stroke="#94a3b8" stroke-width="6" />
+      <line x1="120" y1="184" x2="160" y2="280" stroke="#94a3b8" stroke-width="6" />
+      <!-- Pan Bowl -->
+      <path d="M 70 280 Q 120 330 170 280 Z" fill="url(#tealGrad)" stroke="#fcd34d" stroke-width="5" />
+    </g>
+
+    <!-- Right Pan Assembly -->
+    <g id="right-pan">
+      <!-- Cords -->
+      <line x1="392" y1="184" x2="352" y2="280" stroke="#94a3b8" stroke-width="6" />
+      <line x1="392" y1="184" x2="432" y2="280" stroke="#94a3b8" stroke-width="6" />
+      <!-- Pan Bowl -->
+      <path d="M 342 280 Q 392 330 442 280 Z" fill="url(#tealGrad)" stroke="#fcd34d" stroke-width="5" />
+    </g>
+  </g>
+</svg>

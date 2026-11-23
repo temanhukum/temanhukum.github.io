@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Teman Hukum UMKM</title>
+    <meta name="theme-color" content="#0b1e33">
+
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            50: '#f0f4f8',
+                            100: '#d9e2ec',
+                            600: '#243b53',
+                            700: '#102a43',
+                            800: '#0b1e33',
+                            900: '#071422',
+                        },
+                        tealbrand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                        },
+                        amberbrand: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen antialiased flex flex-col">
+
+    <!-- ======================================================== -->
+    <!-- 1. LOGIN SCREEN (Tampil jika belum autentikasi)           -->
+    <!-- ======================================================== -->
+    <div id="login-section" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900">
+        <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 sm:p-10 border border-slate-100 relative">
+            
+            <!-- Link Kembali ke Web Utama -->
+            <div class="mb-5">
+                <a href="index.html" class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-navy-800 transition-colors group">
+                    <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
+                    <span>Kembali ke Website Utama</span>
+                </a>
+            </div>
+
+            <!-- Logo & Brand Header -->
+            <div class="text-center mb-8">
+                <div class="w-14 h-14 rounded-2xl bg-navy-700 text-white flex items-center justify-center mx-auto mb-3 shadow-md">
+                    <i data-lucide="shield-check" class="w-7 h-7 text-tealbrand-500"></i>
+                </div>
+                <h1 class="text-2xl font-extrabold text-navy-800 tracking-tight">Portal Admin</h1>
+                <p class="text-xs text-slate-500 mt-1">Teman Hukum UMKM — Akses Khusus Pengelola</p>
+            </div>
+
+            <!-- Alert Error Login -->
+            <div id="login-alert" class="hidden mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-start gap-2.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-rose-500 shrink-0 mt-0.5"></i>
+                <span id="login-alert-text">Username atau password salah!</span>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Username / Email</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i data-lucide="user" class="w-4 h-4"></i>
+                        </span>
+                        <input type="text" id="username" required placeholder="Masukkan username" class="w-full rounded-xl border border-slate-300 pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-tealbrand-500 transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Password</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i data-lucide="lock" class="w-4 h-4"></i>
+                        </span>
+                        <input type="password" id="password" required placeholder="••••••••" class="w-full rounded-xl border border-slate-300 pl-10 pr-11 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-tealbrand-500 transition-all">
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600">
+                            <i id="password-toggle-icon" data-lucide="eye" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" id="btn-login" class="w-full py-3.5 rounded-xl bg-tealbrand-600 hover:bg-tealbrand-700 text-white font-bold text-sm shadow-lg shadow-tealbrand-600/30 flex items-center justify-center gap-2 transition-all">
+                        <span id="btn-login-text">Masuk ke Dashboard</span>
+                        <div id="btn-login-spinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Pengaturan URL Webhook API -->
+            <div class="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                <span class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Database: Google Sheets
+                </span>
+                <button type="button" onclick="openConfigModal()" class="text-tealbrand-600 hover:underline font-semibold flex items-center gap-1">
+                    <i data-lucide="settings" class="w-3.5 h-3.5"></i> Set Web App URL
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 2. DASHBOARD SCREEN (Tampil jika sudah terautentikasi)    -->
+    <!-- ======================================================== -->
+    <div id="dashboard-section" class="hidden min-h-screen flex-col">
+        
+        <!-- Top Navbar -->
+        <header class="bg-navy-800 text-white sticky top-0 z-30 shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <!-- Brand -->
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-tealbrand-600 flex items-center justify-center text-white">
+                        <i data-lucide="scale" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-base tracking-tight block leading-none">Teman Hukum</span>
+                        <span class="text-[11px] text-tealbrand-400 font-semibold uppercase tracking-wider">Admin Workspace</span>
+                    </div>
+                </div>
+
+                <!-- User profile, Web Link & Logout -->
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <a href="index.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-navy-700 hover:bg-navy-600 text-slate-200 hover:text-white text-xs font-bold transition-all border border-white/10 shadow-sm" title="Buka Halaman Utama Website">
+                        <i data-lucide="globe" class="w-3.5 h-3.5 text-tealbrand-400"></i>
+                        <span class="hidden sm:inline">Lihat Web Publik</span>
+                        <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
+                    </a>
+                    <div class="hidden md:flex flex-col text-right">
+                        <span id="admin-display-name" class="text-xs font-bold text-white">Admin</span>
+                        <span id="admin-display-role" class="text-[10px] text-slate-300">Pengelola</span>
+                    </div>
+                    <button onclick="refreshData()" title="Muat Ulang Data" class="p-2 rounded-lg bg-navy-700 hover:bg-navy-600 text-slate-300 hover:text-white transition-colors">
+                        <i data-lucide="refresh-cw" class="w-4 h-4" id="refresh-icon"></i>
+                    </button>
+                    <button onclick="openConfigModal()" title="Konfigurasi URL Spreadsheet" class="p-2 rounded-lg bg-navy-700 hover:bg-navy-600 text-slate-300 hover:text-white transition-colors">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="handleLogout()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white text-xs font-bold transition-all">
+                        <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                        <span>Keluar</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Container -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+            
+            <!-- Welcome Bar & Stats -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-bold uppercase text-slate-400 tracking-wider">Total Reservasi</div>
+                        <div id="stat-total" class="text-2xl font-extrabold text-navy-800 mt-1">0</div>
+                    </div>
+                    <div class="w-11 h-11 rounded-xl bg-tealbrand-50 text-tealbrand-600 flex items-center justify-center">
+                        <i data-lucide="calendar" class="w-5 h-5"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-bold uppercase text-slate-400 tracking-wider">Sesi Mendatang</div>
+                        <div id="stat-upcoming" class="text-2xl font-extrabold text-navy-800 mt-1">0</div>
+                    </div>
+                    <div class="w-11 h-11 rounded-xl bg-amber-50 text-amberbrand-600 flex items-center justify-center">
+                        <i data-lucide="clock" class="w-5 h-5"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-bold uppercase text-slate-400 tracking-wider">Format Privat</div>
+                        <div id="stat-privat" class="text-2xl font-extrabold text-navy-800 mt-1">0</div>
+                    </div>
+                    <div class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                        <i data-lucide="user-check" class="w-5 h-5"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-bold uppercase text-slate-400 tracking-wider">Format Kelompok</div>
+                        <div id="stat-group" class="text-2xl font-extrabold text-navy-800 mt-1">0</div>
+                    </div>
+                    <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Card with Search & Filters -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                
+                <!-- Filter Bar -->
+                <div class="p-5 border-b border-slate-200/80 flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between bg-slate-50/50">
+                    <!-- Search Input -->
+                    <div class="relative flex-1 max-w-md">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i data-lucide="search" class="w-4 h-4"></i>
+                        </span>
+                        <input type="text" id="search-input" oninput="applyFilters()" placeholder="Cari nama, usaha, topik, atau kode..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-tealbrand-500 bg-white">
+                    </div>
+
+                    <!-- Dropdown Filters -->
+                    <div class="flex flex-wrap items-center gap-3">
+                        <select id="filter-topic" onchange="applyFilters()" class="rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-tealbrand-500">
+                            <option value="">Semua Topik</option>
+                            <option value="Legalitas Dasar & NIB (OSS)">Legalitas Dasar & NIB (OSS)</option>
+                            <option value="Perlindungan Merek & HKI">Perlindungan Merek & HKI</option>
+                            <option value="Kontrak Bisnis & Kemitraan">Kontrak Bisnis & Kemitraan</option>
+                            <option value="Sertifikasi Halal, PIRT & BPOM">Sertifikasi Halal, PIRT & BPOM</option>
+                            <option value="Kepatuhan Pajak UMKM">Kepatuhan Pajak UMKM</option>
+                            <option value="Hukum E-Commerce & Konsumen">Hukum E-Commerce & Konsumen</option>
+                        </select>
+
+                        <select id="filter-status" onchange="applyFilters()" class="rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-tealbrand-500">
+                            <option value="">Semua Status</option>
+                            <option value="Menunggu Konfirmasi">Menunggu Konfirmasi</option>
+                            <option value="Terkonfirmasi">Terkonfirmasi</option>
+                            <option value="Selesai">Selesai</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Table Content -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase text-slate-500 tracking-wider">
+                                <th class="py-3.5 px-4">Kode Booking</th>
+                                <th class="py-3.5 px-4">Klien & Usaha</th>
+                                <th class="py-3.5 px-4">Jadwal Sesi</th>
+                                <th class="py-3.5 px-4">Topik & Format</th>
+                                <th class="py-3.5 px-4">Kontak</th>
+                                <th class="py-3.5 px-4">Meeting Platform</th>
+                                <th class="py-3.5 px-4">Status</th>
+                                <th class="py-3.5 px-4 text-center">Aksi Cepat</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservation-table-body" class="divide-y divide-slate-100 text-slate-700">
+                            <!-- Rows will be rendered dynamically by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="hidden py-16 text-center">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+                        <i data-lucide="inbox" class="w-6 h-6"></i>
+                    </div>
+                    <div class="font-bold text-navy-800 text-base">Belum Ada Data Reservasi</div>
+                    <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Data reservasi dari formulir online akan muncul di sini secara otomatis.</p>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loading-state" class="py-16 text-center">
+                    <div class="w-8 h-8 border-3 border-tealbrand-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                    <div class="text-xs font-semibold text-slate-500">Memuat data dari Google Spreadsheet...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 3. MODAL DETAIL RESERVASI & CATATAN                      -->
+    <!-- ======================================================== -->
+    <div id="detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-navy-900/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-tealbrand-50 text-tealbrand-600 flex items-center justify-center font-bold">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-navy-800 text-base">Detail Lengkap Reservasi</h3>
+                        <p id="modal-detail-code" class="text-xs text-tealbrand-600 font-mono font-bold"></p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeDetailModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="py-4 space-y-3.5 text-sm">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <span class="text-xs text-slate-400 uppercase font-semibold">Nama Klien</span>
+                        <div id="modal-detail-name" class="font-bold text-navy-800"></div>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 uppercase font-semibold">Nama Usaha / Brand</span>
+                        <div id="modal-detail-business" class="font-bold text-navy-800"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <span class="text-xs text-slate-400 uppercase font-semibold">WhatsApp</span>
+                        <div id="modal-detail-wa" class="font-medium text-slate-700"></div>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 uppercase font-semibold">Email</span>
+                        <div id="modal-detail-email" class="font-medium text-slate-700"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="text-xs text-slate-400 uppercase font-semibold">Topik yang Dipilih</span>
+                    <div id="modal-detail-topic" class="font-bold text-amberbrand-600"></div>
+                </div>
+
+                <div>
+                    <span class="text-xs text-slate-400 uppercase font-semibold">Format & Jadwal</span>
+                    <div id="modal-detail-schedule" class="font-medium text-navy-800"></div>
+                </div>
+
+                <div>
+                    <span class="text-xs text-slate-400 uppercase font-semibold">Pertanyaan / Kendala Klien</span>
+                    <div id="modal-detail-notes" class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 italic"></div>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex gap-2">
+                <a id="modal-wa-btn" href="#" target="_blank" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i> Hubungi via WhatsApp
+                </a>
+                <button type="button" onclick="closeDetailModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL ATUR JADWAL & LINK MEETING                         -->
+    <!-- ======================================================== -->
+    <div id="meeting-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-navy-900/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-tealbrand-50 text-tealbrand-600 flex items-center justify-center">
+                        <i data-lucide="video" class="w-4 h-4"></i>
+                    </div>
+                    <h3 class="font-extrabold text-navy-800 text-base">Atur Jadwal & Link Meeting</h3>
+                </div>
+                <button type="button" onclick="closeMeetingModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form id="meeting-form" class="py-4 space-y-3.5 text-sm">
+                <input type="hidden" id="meet-code">
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                    <div class="text-[11px] uppercase font-bold text-slate-400 tracking-wider">Klien Terjadwal:</div>
+                    <div id="meet-client-info" class="font-bold text-navy-800 text-xs mt-0.5"></div>
+                    <div id="meet-topic-info" class="text-xs text-tealbrand-600 font-medium mt-0.5"></div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Platform Video Conference</label>
+                    <select id="meet-platform" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 font-semibold focus:outline-none focus:ring-2 focus:ring-tealbrand-500">
+                        <option value="Google Meet">Google Meet</option>
+                        <option value="Zoom Meeting">Zoom Meeting</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Tautan / Link Meeting</label>
+                    <input type="url" id="meet-link" placeholder="https://meet.google.com/xxx-xxxx-xxx atau URL Zoom" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-tealbrand-500 font-mono">
+                    <p class="text-[11px] text-slate-400 mt-1">Tempelkan tautan Google Meet atau Zoom untuk sesi ini.</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Tanggal Sesi</label>
+                        <input type="text" id="meet-date" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-tealbrand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Jam (WIB)</label>
+                        <input type="text" id="meet-time" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-tealbrand-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Status Publikasi ke Web Publik</label>
+                    <select id="meet-status" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 font-semibold focus:outline-none focus:ring-2 focus:ring-tealbrand-500">
+                        <option value="Terkonfirmasi">Terkonfirmasi & Tampilkan di Web Publik</option>
+                        <option value="Menunggu Konfirmasi">Menunggu Konfirmasi (Draft/Sembunyikan)</option>
+                        <option value="Selesai">Selesai (Tandai Selesai)</option>
+                    </select>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" onclick="closeMeetingModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200">Batal</button>
+                    <button type="submit" id="btn-save-meet" class="px-5 py-2 rounded-xl bg-tealbrand-600 text-white font-bold text-xs hover:bg-tealbrand-700 flex items-center gap-1.5 shadow-md shadow-tealbrand-600/20">
+                        <span id="btn-save-meet-text">Simpan & Publikasikan</span>
+                        <div id="btn-save-meet-spinner" class="hidden w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 4. MODAL SETTING WEB APP URL                             -->
+    <!-- ======================================================== -->
+    <div id="config-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-navy-900/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 class="font-extrabold text-navy-800 text-base flex items-center gap-2">
+                    <i data-lucide="database" class="w-4 h-4 text-tealbrand-600"></i> Pengaturan Endpoint Google Apps Script
+                </h3>
+                <button type="button" onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="py-4 space-y-3">
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Tempelkan <strong>Web App URL</strong> hasil deployment Google Apps Script Anda (berawalan <code>https://script.google.com/macros/s/.../exec</code>) di bawah ini:
+                </p>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Web App Executable URL</label>
+                    <input type="url" id="config-script-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full text-xs p-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-tealbrand-500 font-mono">
+                </div>
+                <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-800">
+                    <strong>Catatan:</strong> URL ini tersimpan dengan aman di browser lokal Anda. Jika URL belum dipasang, dashboard akan menampilkan data simulasi/demo untuk pengujian.
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                <button type="button" onclick="closeConfigModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200">Batal</button>
+                <button type="button" onclick="saveConfigUrl()" class="px-5 py-2 rounded-xl bg-tealbrand-600 text-white font-bold text-xs hover:bg-tealbrand-700">Simpan URL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 5. JAVASCRIPT LOGIC                                      -->
+    <!-- ======================================================== -->
+    <script>
+        // Key Storage
+        const STORAGE_KEY_AUTH = 'teman_hukum_admin_auth';
+        const STORAGE_KEY_URL = 'teman_hukum_script_url';
+        const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzHLVW0psbvylVf-8ZLaOMKnHX-zHC_P6bxeZq7qXjPDGjpMQE846zJIALu-QphWK-sOg/exec';
+
+        function getScriptUrl() {
+            return localStorage.getItem(STORAGE_KEY_URL) || DEFAULT_SCRIPT_URL;
+        }
+
+        // State Data
+        let reservations = [];
+
+        // Mock data jika spreadsheet belum terhubung
+        const mockReservations = [
+            {
+                kode_booking: 'THU-9182',
+                nama: 'Budi Santoso',
+                nama_usaha: 'Keripik Tempe Jaya',
+                whatsapp: '081234567890',
+                email: 'budi@tempejaya.com',
+                format_sesi: 'Sesi Privat 1-on-1 (30 Menit)',
+                topik: 'Legalitas Dasar & NIB (OSS)',
+                tanggal: '2026-11-25',
+                jam: '09:00 WIB',
+                catatan: 'Ingin tanya mengenai perbedaan PT Perorangan dengan CV untuk usaha makanan ringan.',
+                status: 'Menunggu Konfirmasi'
+            },
+            {
+                kode_booking: 'THU-4821',
+                nama: 'Siti Rahmawati',
+                nama_usaha: 'Dapur Sambal Bu Siti',
+                whatsapp: '085712345678',
+                email: 'siti@sambalbusiti.id',
+                format_sesi: 'Kelas Kelompok UMKM (60 Menit)',
+                topik: 'Sertifikasi Halal, PIRT & BPOM',
+                tanggal: '2026-11-26',
+                jam: '14:00 WIB',
+                catatan: 'Mau daftar sertifikasi halal gratis (self-declare), dokumen apa saja yang wajib disiapkan?',
+                status: 'Terkonfirmasi'
+            },
+            {
+                kode_booking: 'THU-7734',
+                nama: 'Ahmad Fauzi',
+                nama_usaha: 'Fauzi Leather Goods',
+                whatsapp: '081987654321',
+                email: 'fauzi@leathercraft.com',
+                format_sesi: 'Sesi Privat 1-on-1 (30 Menit)',
+                topik: 'Perlindungan Merek & HKI',
+                tanggal: '2026-11-27',
+                jam: '19:30 WIB',
+                catatan: 'Brand dompet kulit kami sudah ditiru orang di marketplace, bagaimana langkah hukumnya?',
+                status: 'Selesai'
+            }
+        ];
+
+        // Initialize icons
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            checkAuth();
+            loadScriptUrl();
+        });
+
+        // Toggle Password Visibility
+        function togglePasswordVisibility() {
+            const pwdInput = document.getElementById('password');
+            const icon = document.getElementById('password-toggle-icon');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                pwdInput.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
+
+        // Check authentication state in sessionStorage
+        function checkAuth() {
+            const authData = sessionStorage.getItem(STORAGE_KEY_AUTH);
+            if (authData) {
+                const user = JSON.parse(authData);
+                showDashboard(user);
+            } else {
+                showLogin();
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('dashboard-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.remove('flex');
+        }
+
+        function showDashboard(user) {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.remove('hidden');
+            document.getElementById('dashboard-section').classList.add('flex');
+            
+            document.getElementById('admin-display-name').textContent = user.nama || user.username || 'Admin';
+            document.getElementById('admin-display-role').textContent = user.role || 'Pengelola';
+
+            refreshData();
+        }
+
+        // Handle Login Submission
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const usernameInput = document.getElementById('username').value.trim();
+            const passwordInput = document.getElementById('password').value;
+            const alertBox = document.getElementById('login-alert');
+            const alertText = document.getElementById('login-alert-text');
+            const btnText = document.getElementById('btn-login-text');
+            const spinner = document.getElementById('btn-login-spinner');
+            const btn = document.getElementById('btn-login');
+
+            alertBox.classList.add('hidden');
+            btn.disabled = true;
+            btnText.textContent = 'Memverifikasi...';
+            spinner.classList.remove('hidden');
+
+            const scriptUrl = getScriptUrl();
+
+            if (scriptUrl) {
+                // Call Google Apps Script Web App
+                try {
+                    const response = await fetch(scriptUrl, {
+                        method: 'POST',
+                        mode: 'cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            action: 'login',
+                            username: usernameInput,
+                            password: passwordInput
+                        })
+                    });
+
+                    const res = await response.json();
+
+                    if (res && res.success) {
+                        const userObj = {
+                            username: usernameInput,
+                            nama: res.nama || usernameInput,
+                            role: res.role || 'Admin'
+                        };
+                        sessionStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(userObj));
+                        showDashboard(userObj);
+                    } else {
+                        alertText.textContent = res.message || 'Username atau password salah (cek sheet "user").';
+                        alertBox.classList.remove('hidden');
+                    }
+                } catch (err) {
+                    console.error('Fetch error:', err);
+                    alertText.textContent = 'Gagal menghubungi Google Apps Script. Pastikan URL benar & Web App di-deploy dengan akses "Anyone".';
+                    alertBox.classList.remove('hidden');
+                }
+            } else {
+                // Fallback demo mode jika URL belum diisi:
+                // Izinkan login default (admin / admin123) untuk demonstrasi
+                if ((usernameInput === 'admin' && passwordInput === 'admin123') || (usernameInput === 'temanhukum' && passwordInput === 'hukum123')) {
+                    const userObj = {
+                        username: usernameInput,
+                        nama: usernameInput === 'admin' ? 'Admin Utama' : 'Teman Hukum Team',
+                        role: 'Administrator'
+                    };
+                    sessionStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(userObj));
+                    showDashboard(userObj);
+                } else {
+                    alertText.textContent = 'Login Demo: Gunakan username "admin" & password "admin123", atau klik "Set Web App URL" untuk koneksi spreadsheet asli.';
+                    alertBox.classList.remove('hidden');
+                }
+            }
+
+            btn.disabled = false;
+            btnText.textContent = 'Masuk ke Dashboard';
+            spinner.classList.add('hidden');
+        });
+
+        function handleLogout() {
+            sessionStorage.removeItem(STORAGE_KEY_AUTH);
+            showLogin();
+            document.getElementById('password').value = '';
+        }
+
+        // Fetch Data from Google Sheet
+        async function refreshData() {
+            const refreshIcon = document.getElementById('refresh-icon');
+            refreshIcon.classList.add('animate-spin');
+            
+            const loadingState = document.getElementById('loading-state');
+            const emptyState = document.getElementById('empty-state');
+            const tbody = document.getElementById('reservation-table-body');
+            
+            loadingState.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            tbody.innerHTML = '';
+
+            const scriptUrl = getScriptUrl();
+
+            if (scriptUrl) {
+                try {
+                    const response = await fetch(`${scriptUrl}?action=getReservations`);
+                    const res = await response.json();
+                    
+                    if (res && res.success && Array.isArray(res.data)) {
+                        reservations = res.data;
+                    } else {
+                        reservations = [];
+                    }
+                } catch (err) {
+                    console.error('Error fetching reservations:', err);
+                    // Gunakan mock data jika terjadi error fetch
+                    reservations = mockReservations;
+                }
+            } else {
+                // Gunakan mock data untuk demo
+                reservations = mockReservations;
+            }
+
+            loadingState.classList.add('hidden');
+            refreshIcon.classList.remove('animate-spin');
+            applyFilters();
+            updateStats();
+        }
+
+        // Render Table & Filter
+        function applyFilters() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            const topicFilter = document.getElementById('filter-topic').value;
+            const statusFilter = document.getElementById('filter-status').value;
+
+            const filtered = reservations.filter(item => {
+                const matchQuery = 
+                    (item.kode_booking && item.kode_booking.toLowerCase().includes(query)) ||
+                    (item.nama && item.nama.toLowerCase().includes(query)) ||
+                    (item.nama_usaha && item.nama_usaha.toLowerCase().includes(query)) ||
+                    (item.topik && item.topik.toLowerCase().includes(query));
+
+                const matchTopic = !topicFilter || item.topik === topicFilter;
+                const matchStatus = !statusFilter || item.status === statusFilter;
+
+                return matchQuery && matchTopic && matchStatus;
+            });
+
+            renderTable(filtered);
+        }
+
+        function renderTable(dataList) {
+            const tbody = document.getElementById('reservation-table-body');
+            const emptyState = document.getElementById('empty-state');
+            tbody.innerHTML = '';
+
+            if (dataList.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            dataList.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50/80 transition-colors';
+
+                // Status Badge Color
+                let statusBadge = '';
+                if (item.status === 'Selesai') {
+                    statusBadge = '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700">Selesai</span>';
+                } else if (item.status === 'Terkonfirmasi') {
+                    statusBadge = '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700">Terkonfirmasi</span>';
+                } else {
+                    statusBadge = '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700">Menunggu</span>';
+                }
+
+                // WhatsApp clean number
+                let cleanWa = (item.whatsapp || '').replace(/[^0-9]/g, '');
+                if (cleanWa.startsWith('0')) cleanWa = '62' + cleanWa.slice(1);
+
+                // Platform & Meeting Display
+                let meetDisplay = '';
+                if (item.meeting_link) {
+                    meetDisplay = `
+                        <div class="flex items-center gap-1.5">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold ${item.platform === 'Zoom Meeting' ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-700'}">
+                                <i data-lucide="video" class="w-3 h-3"></i> ${item.platform || 'Meet'}
+                            </span>
+                        </div>
+                        <a href="${item.meeting_link}" target="_blank" class="text-[11px] text-tealbrand-600 hover:underline flex items-center gap-1 mt-0.5 font-medium truncate max-w-[140px]" title="${item.meeting_link}">
+                            <i data-lucide="external-link" class="w-2.5 h-2.5"></i> Buka Tautan
+                        </a>
+                    `;
+                } else {
+                    meetDisplay = `
+                        <span class="text-xs text-slate-400 italic">Belum diatur</span>
+                    `;
+                }
+
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-mono font-bold text-tealbrand-700 text-xs">${item.kode_booking || '-'}</td>
+                    <td class="py-3.5 px-4">
+                        <div class="font-bold text-navy-800">${item.nama || '-'}</div>
+                        <div class="text-xs text-slate-500">${item.nama_usaha || '-'}</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                        <div class="font-semibold text-slate-800">${item.tanggal || '-'}</div>
+                        <div class="text-xs text-slate-500">${item.jam || '-'}</div>
+                    </td>
+                    <td class="py-3.5 px-4 max-w-[200px]">
+                        <div class="font-semibold text-navy-800 truncate" title="${item.topik || ''}">${item.topik || '-'}</div>
+                        <div class="text-xs text-tealbrand-600 truncate">${item.format_sesi || '-'}</div>
+                    </td>
+                    <td class="py-3.5 px-4 text-xs">
+                        <div class="font-medium text-slate-800">${item.whatsapp || '-'}</div>
+                        <div class="text-slate-400">${item.email || '-'}</div>
+                    </td>
+                    <td class="py-3.5 px-4">${meetDisplay}</td>
+                    <td class="py-3.5 px-4">${statusBadge}</td>
+                    <td class="py-3.5 px-4 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="openMeetingModal(${index})" title="Atur Jadwal & Link Meeting" class="p-2 rounded-lg bg-tealbrand-50 text-tealbrand-700 hover:bg-tealbrand-600 hover:text-white transition-colors">
+                                <i data-lucide="video" class="w-4 h-4"></i>
+                            </button>
+                            <a href="https://wa.me/${cleanWa}?text=Halo%20${encodeURIComponent(item.nama || '')}%2C%20kami%20dari%20Teman%20Hukum%20UMKM%20terkait%20jadwal%20edukasi%20${encodeURIComponent(item.kode_booking || '')}" target="_blank" title="Chat WhatsApp" class="p-2 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-colors">
+                                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                            </a>
+                            <button onclick="openDetailModal(${index})" title="Lihat Detail Lengkap" class="p-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-navy-700 hover:text-white transition-colors">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            lucide.createIcons();
+        }
+
+        // Summary Stats Calculation
+        function updateStats() {
+            document.getElementById('stat-total').textContent = reservations.length;
+            
+            const upcoming = reservations.filter(r => r.status !== 'Selesai').length;
+            document.getElementById('stat-upcoming').textContent = upcoming;
+
+            const privatCount = reservations.filter(r => (r.format_sesi || '').toLowerCase().includes('privat')).length;
+            document.getElementById('stat-privat').textContent = privatCount;
+
+            const groupCount = reservations.filter(r => (r.format_sesi || '').toLowerCase().includes('kelompok') || (r.format_sesi || '').toLowerCase().includes('komunitas')).length;
+            document.getElementById('stat-group').textContent = groupCount;
+        }
+
+        // Detail Modal
+        function openDetailModal(index) {
+            const item = reservations[index];
+            if (!item) return;
+
+            document.getElementById('modal-detail-code').textContent = item.kode_booking || '-';
+            document.getElementById('modal-detail-name').textContent = item.nama || '-';
+            document.getElementById('modal-detail-business').textContent = item.nama_usaha || '-';
+            document.getElementById('modal-detail-wa').textContent = item.whatsapp || '-';
+            document.getElementById('modal-detail-email').textContent = item.email || '-';
+            document.getElementById('modal-detail-topic').textContent = item.topik || '-';
+            document.getElementById('modal-detail-schedule').textContent = `${item.format_sesi || '-'} • ${item.tanggal || '-'} (${item.jam || '-'})`;
+            document.getElementById('modal-detail-notes').textContent = item.catatan ? `"${item.catatan}"` : 'Tidak ada catatan tambahan.';
+
+            let cleanWa = (item.whatsapp || '').replace(/[^0-9]/g, '');
+            if (cleanWa.startsWith('0')) cleanWa = '62' + cleanWa.slice(1);
+            document.getElementById('modal-wa-btn').href = `https://wa.me/${cleanWa}?text=Halo%20${encodeURIComponent(item.nama || '')}%2C%20kami%20dari%20Teman%20Hukum%20UMKM...`;
+
+            const modal = document.getElementById('detail-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeDetailModal() {
+            const modal = document.getElementById('detail-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Meeting Modal Functions
+        function openMeetingModal(index) {
+            const item = reservations[index];
+            if (!item) return;
+
+            document.getElementById('meet-code').value = item.kode_booking;
+            document.getElementById('meet-client-info').textContent = `${item.nama || '-'} (${item.nama_usaha || '-'}) [${item.kode_booking}]`;
+            document.getElementById('meet-topic-info').textContent = `${item.topik || '-'} • ${item.format_sesi || '-'}`;
+            document.getElementById('meet-platform').value = item.platform || 'Google Meet';
+            document.getElementById('meet-link').value = item.meeting_link || '';
+            document.getElementById('meet-date').value = item.tanggal || '';
+            document.getElementById('meet-time').value = item.jam || '';
+            document.getElementById('meet-status').value = item.status || 'Terkonfirmasi';
+
+            const modal = document.getElementById('meeting-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeMeetingModal() {
+            const modal = document.getElementById('meeting-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Handle Meeting Form Submit
+        document.getElementById('meeting-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-meet');
+            const btnText = document.getElementById('btn-save-meet-text');
+            const spinner = document.getElementById('btn-save-meet-spinner');
+
+            btn.disabled = true;
+            btnText.textContent = 'Menyimpan...';
+            spinner.classList.remove('hidden');
+
+            const payload = {
+                action: 'updateSchedule',
+                kode_booking: document.getElementById('meet-code').value,
+                platform: document.getElementById('meet-platform').value,
+                meeting_link: document.getElementById('meet-link').value.trim(),
+                tanggal: document.getElementById('meet-date').value.trim(),
+                jam: document.getElementById('meet-time').value.trim(),
+                status: document.getElementById('meet-status').value
+            };
+
+            const scriptUrl = getScriptUrl();
+
+            try {
+                const response = await fetch(scriptUrl, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                const res = await response.json();
+                if (res && res.success) {
+                    closeMeetingModal();
+                    refreshData();
+                } else {
+                    alert(res.message || 'Gagal menyimpan jadwal meeting.');
+                }
+            } catch (err) {
+                console.error('Error updating meeting:', err);
+                alert('Terjadi kesalahan koneksi ke Google Spreadsheet.');
+            }
+
+            btn.disabled = false;
+            btnText.textContent = 'Simpan & Publikasikan';
+            spinner.classList.add('hidden');
+        });
+
+        // Config Modal
+        function openConfigModal() {
+            document.getElementById('config-script-url').value = localStorage.getItem(STORAGE_KEY_URL) || '';
+            const modal = document.getElementById('config-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeConfigModal() {
+            const modal = document.getElementById('config-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function saveConfigUrl() {
+            const url = document.getElementById('config-script-url').value.trim();
+            if (url) {
+                localStorage.setItem(STORAGE_KEY_URL, url);
+            } else {
+                localStorage.removeItem(STORAGE_KEY_URL);
+            }
+            closeConfigModal();
+            refreshData();
+        }
+
+        function loadScriptUrl() {
+            document.getElementById('config-script-url').value = getScriptUrl();
+        }
+    </script>
+</body>
+</html>
